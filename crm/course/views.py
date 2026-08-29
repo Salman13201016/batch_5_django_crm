@@ -4,7 +4,8 @@ from .models import*
 # Create your views here.
 
 def course_content(req):
-    return render(req,'course_content.html')
+    pass
+    # return render(req,'course_content.html')
 def category(req):
     if req.method == 'GET':
 
