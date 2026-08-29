@@ -289,18 +289,16 @@
         <div class="page-header">
 
             <div>
-                <h1>Course Category ({{name}})</h1>
+                <h1>Course Category (Edit)</h1>
 
 
 
                 <p>
-                    Create and manage your course categories
+                    Edit our course categories
                 </p>
             </div>
 
-            <button class="btn btn-primary">
-                + Add Category
-            </button>
+
 
         </div>
 
@@ -309,7 +307,7 @@
 
         <div class="form-card">
 
-            <form method="POST" action="{% url 'course_category' %}">
+            <form method="POST" action="{% url 'category_edit' cat_data.id %}">
 
                 {% csrf_token %}
 
@@ -325,6 +323,7 @@
                         class="form-control"
                         placeholder="e.g. Web Development"
                         required
+                        value="{{cat_data.category_name}}"
                     >
 
                 </div>
@@ -340,7 +339,8 @@
                         name="description"
                         class="form-control"
                         placeholder="Write a short description..."
-                    ></textarea>
+                        value = 
+                    >{{cat_data.description}}</textarea>
 
                 </div>
 
@@ -382,6 +382,7 @@
                             name="sort_order"
                             class="form-control"
                             placeholder="1"
+                            value="{{cat_data.sort_order}}"
                         >
 
                     </div>
@@ -402,77 +403,7 @@
 
             <!-- ========================= Category List Table ========================== -->
 
-        <div class="table-card">
 
-        <div class="table-header">
-            <div>
-                <h2>Category List</h2>
-                <p>All course categories are listed below</p>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-
-            <table class="category-table">
-
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Category Name</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Sort Order</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for i in all_data  %}
-                    <tr>
-                        <td>{{forloop.counter}}</td>
-
-                        <td>
-                            <strong>{{i.category_name}}</strong>
-                        </td>
-
-                        <td>
-                            {{i.description}}
-                        </td>
-
-                        <td>
-                            <span class="status active-status">
-                                {{i.status}}
-                            </span>
-                        </td>
-
-                        <td>{{i.sort_order}}</td>
-
-                       <td>
-                        <div class="action-buttons">
-
-                            <a href="{% url 'category_edit' i.id %}" class="action-btn edit-btn">
-                                Edit
-                            </a>
-
-                            <a href="{% url 'course_cat_delete' i.id %}" class="action-btn delete-btn">
-                                Delete
-                            </a>
-
-                        </div>
-                    </td>
-                    </tr>
-                    {% endfor %}
-
-
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        </div>
 
     </main>
 

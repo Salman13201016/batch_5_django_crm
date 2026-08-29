@@ -20,4 +20,6 @@ from . import views as v
 urlpatterns = [
     path('category/',v.category, name='course_category'),
     path('content/',v.course_content, name='course_content'),
+    path('category/edit/<int:cat_id>',v.course_edit, name='category_edit'),
+    path('category/delete/<int:cat_id>',v.course_cat_delete, name='course_cat_delete'),
     ]
