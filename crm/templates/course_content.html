@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Course Content - Admin Panel</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f6fa;
+            color: #1f2937;
+        }
+
+        /* =========================
+           Layout
+        ========================= */
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           Sidebar
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #111827;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            font-size: 21px;
+            font-weight: 700;
+            border-bottom: 1px solid #273142;
+        }
+
+        .sidebar-title {
+            padding: 22px 20px 10px;
+            color: #9ca3af;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            text-decoration: none;
+            color: #d1d5db;
+            padding: 11px 12px;
+            border-radius: 7px;
+        }
+
+        .sidebar-menu a:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .course-menu {
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .sub-menu {
+            list-style: none;
+            margin: 5px 0 15px 18px;
+            padding-left: 10px;
+            border-left: 1px solid #374151;
+        }
+
+        .sub-menu a {
+            font-size: 14px;
+            padding: 9px 12px;
+        }
+
+        .sub-menu a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+
+        /* =========================
+           Main Content
+        ========================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+
+        /* =========================
+           Header
+        ========================= */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           Card
+        ========================= */
+
+        .form-card {
+            background: white;
+            padding: 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+
+        /* =========================
+           Form
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+
+        /* =========================
+           Grid
+        ========================= */
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+
+        /* =========================
+           Syllabus
+        ========================= */
+
+        .syllabus {
+            min-height: 250px !important;
+        }
+
+
+        /* =========================
+           Button
+        ========================= */
+
+        .btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* =========================
+           Responsive
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 20px;
+            }
+
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="admin-wrapper">
+
+
+    <!-- =========================
+         Sidebar
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            Admin Panel
+        </div>
+
+
+        <div class="sidebar-title">
+            Course Management
+        </div>
+
+
+        <ul class="sidebar-menu">
+
+            <li>
+
+                <a href="#" class="course-menu">
+                    Course
+                </a>
+
+
+                <ul class="sub-menu">
+
+                    <li>
+
+                        <a href="{% url 'course_category' %}">
+                            Category
+                        </a>
+
+                    </li>
+
+
+                    <li>
+
+                        <a href="{% url 'course_content' %}"
+                           class="active">
+
+                            Content Details
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </li>
+
+
+            <li>
+                <a href="#">
+                    Students
+                </a>
+            </li>
+
+
+            <li>
+                <a href="#">
+                    Orders
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+
+    <!-- =========================
+         Main Content
+    ========================== -->
+
+    <main class="main-content">
+
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>
+                    Course Content Details
+                </h1>
+
+                <p>
+                    Create and manage your course information
+                </p>
+
+            </div>
+
+
+            <button class="btn btn-primary">
+                + Add Course
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             Course Form
+        ========================== -->
+
+        <div class="form-card">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- Category + Title -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Select Course Category
+                        </label>
+
+
+                        <select
+                            name="category"
+                            class="form-control"
+                            required
+                        >
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option value="{{ category.id }}">
+                                    {{ category.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Course Title
+                        </label>
+
+
+                        <input
+                            type="text"
+                            name="course_title"
+                            class="form-control"
+                            placeholder="e.g. Complete Python Programming"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Overview -->
+
+                <div class="form-group">
+
+                    <label>
+                        Course Overview
+                    </label>
+
+
+                    <textarea
+                        name="overview"
+                        class="form-control"
+                        placeholder="Write course overview..."
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- Price -->
+
+                <div class="form-row-3">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Price
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="price"
+                            class="form-control"
+                            placeholder="15000"
+                            min="0"
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Discount (%)
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="discount"
+                            class="form-control"
+                            placeholder="20"
+                            min="0"
+                            max="100"
+                        >
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Final Price
+                        </label>
+
+
+                        <input
+                            type="number"
+                            name="final_price"
+                            class="form-control"
+                            placeholder="12000"
+                            min="0"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Syllabus -->
+
+                <div class="form-group">
+
+                    <label>
+                        Syllabus
+                    </label>
+
+
+                    <textarea
+                        name="syllabus"
+                        class="form-control syllabus"
+                        placeholder="Module 01: Introduction&#10;Module 02: Fundamentals&#10;Module 03: Practical Project&#10;Module 04: Final Project"
+                    ></textarea>
+
+                </div>
+
+
+
+                <!-- Submit -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+
+                    Save Course
+
+                </button>
+
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Course Category - Admin Panel</title>
+
+    <style>
+        /* ========================= Table Card ========================= */ .table-card { background: #fff; padding: 28px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); max-width: 1200px; margin-top: 25px; } /* ========================= Table Header ========================= */ .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; } .table-header h2 { font-size: 20px; margin-bottom: 5px; } .table-header p { color: #6b7280; font-size: 13px; } /* ========================= Table Wrapper ========================= */ .table-wrapper { width: 100%; overflow-x: auto; } /* ========================= Table ========================= */ .category-table { width: 100%; border-collapse: collapse; font-size: 14px; } .category-table th { background: #f9fafb; color: #374151; font-weight: 600; text-align: left; padding: 13px 14px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; } .category-table td { padding: 14px; border-bottom: 1px solid #e5e7eb; color: #4b5563; vertical-align: middle; } .category-table tbody tr:hover { background: #f9fafb; } /* ========================= Category Name ========================= */ .category-table td strong { color: #1f2937; font-weight: 600; } /* ========================= Status ========================= */ .status { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; } .active-status { background: #dcfce7; color: #15803d; } .inactive-status { background: #fee2e2; color: #b91c1c; } /* ========================= Action Buttons ========================= */ .action-buttons { display: flex; gap: 8px; } .action-btn { border: none; padding: 7px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; } .edit-btn { background: #dbeafe; color: #1d4ed8; } .edit-btn:hover { background: #bfdbfe; } .delete-btn { background: #fee2e2; color: #dc2626; } .delete-btn:hover { background: #fecaca; } /* ========================= Responsive ========================= */ @media (max-width: 768px) { .table-card { padding: 18px; } .category-table { min-width: 800px; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f6fa;
+            color: #1f2937;
+        }
+
+        /* =========================
+           Layout
+        ========================= */
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           Sidebar
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #111827;
+            color: #fff;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            font-size: 21px;
+            font-weight: 700;
+            border-bottom: 1px solid #273142;
+        }
+
+        .sidebar-title {
+            padding: 22px 20px 10px;
+            color: #9ca3af;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            text-decoration: none;
+            color: #d1d5db;
+            padding: 11px 12px;
+            border-radius: 7px;
+        }
+
+        .sidebar-menu a:hover {
+            background: #1f2937;
+            color: #fff;
+        }
+
+        .course-menu {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .sub-menu {
+            list-style: none;
+            margin: 5px 0 15px 18px;
+            padding-left: 10px;
+            border-left: 1px solid #374151;
+        }
+
+        .sub-menu a {
+            font-size: 14px;
+            padding: 9px 12px;
+        }
+
+        .sub-menu a.active {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        /* =========================
+           Main Content
+        ========================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* =========================
+           Button
+        ========================= */
+
+        .btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================
+           Card
+        ========================= */
+
+        .form-card {
+            background: #fff;
+            padding: 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            max-width: 900px;
+        }
+
+        /* =========================
+           Form
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* =========================
+           Responsive
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+    <!-- =========================
+         Sidebar
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            Admin Panel
+        </div>
+
+        <div class="sidebar-title">
+            Course Management
+        </div>
+
+        <ul class="sidebar-menu">
+
+            <li>
+                <a href="#" class="course-menu">
+                    Course
+                </a>
+
+                <ul class="sub-menu">
+
+                    <li>
+                        <a href="{% url 'course_category' %}"
+                           class="active">
+                            Category
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'course_content' %}">
+                            Content Details
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+
+            <li>
+                <a href="#">
+                    Students
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    Orders
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- =========================
+         Main Content
+    ========================== -->
+
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Course Category ({{name}})</h1>
+
+
+
+                <p>
+                    Create and manage your course categories
+                </p>
+            </div>
+
+            <button class="btn btn-primary">
+                + Add Category
+            </button>
+
+        </div>
+
+
+        <!-- Form -->
+
+        <div class="form-card">
+
+            <form method="POST" action="{% url 'course_category' %}">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+
+                    <label>
+                        Category Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="category_name"
+                        class="form-control"
+                        placeholder="e.g. Web Development"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        class="form-control"
+                        placeholder="Write a short description..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label>
+                            Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-control"
+                        >
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Sort Order
+                        </label>
+
+                        <input
+                            type="number"
+                            name="sort_order"
+                            class="form-control"
+                            placeholder="1"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Category
+                </button>
+
+            </form>
+
+        </div>
+
+            <!-- ========================= Category List Table ========================== -->
+
+        <div class="table-card">
+
+        <div class="table-header">
+            <div>
+                <h2>Category List</h2>
+                <p>All course categories are listed below</p>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+
+            <table class="category-table">
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Category Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Sort Order</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for i in all_data  %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+
+                        <td>
+                            <strong>{{i.category_name}}</strong>
+                        </td>
+
+                        <td>
+                            {{i.description}}
+                        </td>
+
+                        <td>
+                            <span class="status active-status">
+                                {{i.status}}
+                            </span>
+                        </td>
+
+                        <td>{{i.sort_order}}</td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button class="action-btn edit-btn">
+                                    Edit
+                                </button>
+
+                                <button class="action-btn delete-btn">
+                                    Delete
+                                </button>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
