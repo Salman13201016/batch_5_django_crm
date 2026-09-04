@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from .models import*
+from openpyxl import load_workbook
+from django.contrib import messages
 # Create your views here.
 
 def course_content(req):
@@ -34,6 +36,79 @@ def course_edit(req,cat_id):
         data = {"cat_data":cat_specific_data}
         return render(req,'category_edit.html',data)
 
+def excel_upload(req, excel_file):
+    try:
+        workbook = load_workbook(excel_file)
+        sheet = workbook.active
+
+        # ডেটাবেস থেকে আগে থেকেই থাকা category_name এবং sort_order নিয়ে আসা হচ্ছে
+        existing_names = set(Category.objects.values_list('category_name', flat=True))
+        existing_sort_orders = set(Category.objects.values_list('sort_order', flat=True))
+
+        categories = []
+        excel_names = set()
+        excel_sort_orders = set()
+
+        # ২ নম্বর রো থেকে ডেটা পড়া শুরু
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            category_name = row[0]
+            description = row[1]
+            status = row[2]
+            sort_order = row[3]
+
+            # নাম বা সর্ট অর্ডার ফাঁকা থাকলে স্কিপ করবে
+            if not category_name or sort_order is None:
+                continue
+
+            # ডেটা ক্লিনিং (আশেপাশের স্পেস মুছে ফেলা)
+            category_name = str(category_name).strip()
+            description = str(description).strip() if description else ""
+            sort_order = str(sort_order).strip()
+
+            # স্ট্যাটাস (True/False) হ্যান্ডেল করা
+            if isinstance(status, bool):
+                final_status = status
+            else:
+                # এক্সেল থেকে টেক্সট হিসেবে আসলে চেক করবে
+                final_status = str(status).strip().lower() in ['true', 'active', '1', 'yes']
+
+            # ======================================
+            # আপনার রিকোয়ারমেন্ট: ডুপ্লিকেট চেকিং
+            # ======================================
+            # ডেটাবেসে যদি আগে থেকেই এই নাম বা সর্ট অর্ডার থাকে, তাহলে স্কিপ (continue) করবে
+            if category_name in existing_names or sort_order in existing_sort_orders:
+                continue
+
+            # এক্সেল ফাইলের ভেতরেই যদি ডুপ্লিকেট থাকে (একই ফাইলে দুইবার), তাহলেও স্কিপ করবে
+            if category_name in excel_names or sort_order in excel_sort_orders:
+                continue
+
+            # ডুপ্লিকেট না হলে নতুন অবজেক্ট লিস্টে যুক্ত করবে
+            categories.append(
+                Category(
+                    category_name=category_name,
+                    description=description,
+                    status=final_status,
+                    sort_order=sort_order
+                )
+            )
+
+            # এক্সেলের লিস্ট আপডেট করা, যেন ফাইলের ভেতরের ডুপ্লিকেট ধরা যায়
+            excel_names.add(category_name)
+            excel_sort_orders.add(sort_order)
+
+        # ==========================================
+        # Bulk Insert (শুধুমাত্র নতুন ডেটাগুলো সেভ হবে)
+        # ==========================================
+        if categories:
+            Category.objects.bulk_create(categories)
+            messages.success(req, f"{len(categories)} new categories uploaded successfully.")
+        else:
+            messages.warning(req, "No new categories found to insert (All were duplicates).")
+
+    except Exception as e:
+        messages.error(req, f"Excel upload failed: {str(e)}")
+
 
 def category(req):
     if req.method == 'GET':
@@ -46,6 +121,15 @@ def category(req):
 
         return render(req,'course_category.html',data)
     else:
+
+        excel_file = req.FILES.get('excel_file')
+
+        if excel_file:
+            excel_upload(req, excel_file)
+
+            # excel_upload(req, excel_file)
+
+            return redirect('course_category')
         category_name = req.POST.get('category_name')
         description = req.POST.get('description')
         status = req.POST.get('status')

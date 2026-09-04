@@ -305,9 +305,37 @@
         </div>
 
 
-        <!-- Form -->
+                <!-- Form -->
+            
+
 
         <div class="form-card">
+            <div style="display: flex; gap: 10px;">
+
+                <!-- Excel Upload Form -->
+                <form method="POST"
+                    action="{% url 'course_category' %}"
+                    enctype="multipart/form-data"
+                    style="display: flex; gap: 8px; align-items: center;">
+
+                    {% csrf_token %}
+
+                    <input type="file"
+                        name="excel_file"
+                        accept=".xlsx,.xls"
+                        class="form-control"
+                        style="width: 220px;"
+                        required>
+
+                    <button type="submit" class="btn btn-primary">
+                        Import
+                    </button>
+
+                </form>
+
+
+
+            </div>
 
             <form method="POST" action="{% url 'course_category' %}">
 
