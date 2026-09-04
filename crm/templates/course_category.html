@@ -333,6 +333,17 @@
 
                 </form>
 
+                <!-- NEW: Excel Export Form -->
+                <form method="POST" action="{% url 'course_category' %}">
+                    {% csrf_token %}
+                    <!-- এই হিডেন ফিল্ড দিয়ে আমরা বুঝবো যে এক্সপোর্ট রিকোয়েস্ট এসেছে -->
+                    <input type="hidden" name="export_data" value="excel">
+                    
+                    <button type="submit" class="btn" style="background: #10b981; color: white;">
+                        Export Excel
+                    </button>
+                </form>
+
 
 
             </div>

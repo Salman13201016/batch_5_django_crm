@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .models import*
 from openpyxl import load_workbook
 from django.contrib import messages
+from openpyxl import Workbook
+from openpyxl.styles import Font
 # Create your views here.
 
 def course_content(req):
@@ -121,6 +123,37 @@ def category(req):
 
         return render(req,'course_category.html',data)
     else:
+        if req.POST.get('export_data') == 'excel':
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Category Data"
+
+            # হেডার
+            headers = ["Category Name", "Description", "Status", "Sort Order"]
+            ws.append(headers)
+
+            for col_num in range(1, len(headers) + 1):
+                cell = ws.cell(row=1, column=col_num)
+                cell.font = Font(bold=True)
+
+            # ডেটাবেস থেকে ডেটা এনে বসানো
+            categories = Category.objects.order_by('-id')
+            for cat in categories:
+                status_text = "Active" if cat.status else "Inactive"
+                ws.append([
+                    cat.category_name,
+                    cat.description,
+                    status_text,
+                    cat.sort_order
+                ])
+
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename="Category_Export.xlsx"'
+            wb.save(response)
+            
+            return response # পেজ রিলোড না হয়ে সরাসরি ফাইল ডাউনলোড হবে
 
         excel_file = req.FILES.get('excel_file')
 
