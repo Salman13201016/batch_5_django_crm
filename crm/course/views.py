@@ -140,9 +140,15 @@ def course_details(req):
         course_details_obj.save()
         return redirect('course_details')
     else:
+        #select id, category_name from category
         categories = Category.objects.values('id', 'category_name')
-        cat_data = {'cat_data':categories}
-        return render(req,'course_details.html',cat_data)
+        all_data_course = CourseDetails.objects.select_related('category_id_fk').all()
+
+        for i in all_data_course:
+            i.disounted_price = i.actual_price - (
+            i.actual_price * i.discount / 100)
+        all_data = {'cat_data':categories,'course_data':all_data_course}
+        return render(req,'course_details.html',all_data)
 
 def category(req):
     if req.method == 'GET':

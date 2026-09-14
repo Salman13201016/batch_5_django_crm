@@ -438,7 +438,7 @@
             <h2>Add Course</h2>
 
             <form method="post" action="{% url 'course_details' %}" enctype="multipart/form-data">
-
+                {% csrf_token %}
                 <div class="form-row">
 
                     <div class="form-group">
@@ -589,6 +589,7 @@
                         <tr>
                             <th>#</th>
                             <th>Category</th>
+                            <th>Category_description</th>
                             <th>Course Title</th>
                             <th>Course Description</th>
                             <th>Actual Price</th>
@@ -596,55 +597,62 @@
                             <th>Price After Discount</th>
                             <th>Course Prerequisite</th>
                             <th>Duration</th>
-                            <th>Status</th>
+                            <th>image</th>
+                            <th>status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-
+                        {% for i in course_data %}
                         <tr>
 
-                            <td>1</td>
+                            <td>{{forloop.counter}}</td>
 
                             <td>
-                                <strong>Artificial Intelligence</strong>
+                                <strong>{{i.category_id_fk.category_name}}</strong>
+                            </td>
+                            <td>
+                                <strong>{{i.category_id_fk.description}}</strong>
                             </td>
 
                             <td>
-                                <strong>AI Automation Engineer</strong>
+                                <strong>{{i.course_title}}</strong>
                             </td>
 
                             <td class="description">
-                                Learn how to build AI agents and automate
-                                real-world business processes using modern AI technologies.
+                                {{i.course_description}}
                             </td>
 
                             <td class="price">
-                                ৳15,000
+                                {{i.actual_price}}
                             </td>
 
                             <td>
-                                <span class="discount">20%</span>
+                                <span class="discount">{{i.discount}}</span>
                             </td>
 
                             <td class="final-price">
-                                ৳12,000
+                                {{i.disounted_price}}
                             </td>
 
                             <td class="prerequisite">
-                                Basic Python programming knowledge and
-                                basic understanding of APIs.
+                                {{i.course_prerequisite}}
                             </td>
 
                             <td>
-                                3 Months
+                                {{i.duration}}
+                            </td>
+                            <td>
+                                <img src="{{ i.course_image.url }}"
+             alt="{{ i.course_title }}"
+             style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px;">
                             </td>
 
                             <td>
                                 <span class="status active-status">
-                                    Active
+                                    {{i.status}}
                                 </span>
                             </td>
 
@@ -661,123 +669,10 @@
                             </td>
 
                         </tr>
+                        {% endfor %}
 
 
-                        <tr>
 
-                            <td>2</td>
-
-                            <td>
-                                <strong>Web Development</strong>
-                            </td>
-
-                            <td>
-                                <strong>Backend Development with AI</strong>
-                            </td>
-
-                            <td class="description">
-                                Build scalable backend applications and
-                                integrate AI-powered features into modern web systems.
-                            </td>
-
-                            <td class="price">
-                                ৳18,000
-                            </td>
-
-                            <td>
-                                <span class="discount">15%</span>
-                            </td>
-
-                            <td class="final-price">
-                                ৳15,300
-                            </td>
-
-                            <td class="prerequisite">
-                                Basic programming knowledge.
-                                Python knowledge is recommended.
-                            </td>
-
-                            <td>
-                                4 Months
-                            </td>
-
-                            <td>
-                                <span class="status active-status">
-                                    Active
-                                </span>
-                            </td>
-
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="#" class="action-btn edit-btn">
-                                        Edit
-                                    </a>
-
-                                    <a href="#" class="action-btn delete-btn">
-                                        Delete
-                                    </a>
-                                </div>
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>3</td>
-
-                            <td>
-                                <strong>Data Science</strong>
-                            </td>
-
-                            <td>
-                                <strong>Data Analytics & BI</strong>
-                            </td>
-
-                            <td class="description">
-                                Learn data analysis, visualization,
-                                business intelligence and practical reporting.
-                            </td>
-
-                            <td class="price">
-                                ৳12,000
-                            </td>
-
-                            <td>
-                                <span class="discount">10%</span>
-                            </td>
-
-                            <td class="final-price">
-                                ৳10,800
-                            </td>
-
-                            <td class="prerequisite">
-                                Basic Excel and fundamental mathematics.
-                            </td>
-
-                            <td>
-                                2 Months
-                            </td>
-
-                            <td>
-                                <span class="status inactive-status">
-                                    Inactive
-                                </span>
-                            </td>
-
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="#" class="action-btn edit-btn">
-                                        Edit
-                                    </a>
-
-                                    <a href="#" class="action-btn delete-btn">
-                                        Delete
-                                    </a>
-                                </div>
-                            </td>
-
-                        </tr>
 
                     </tbody>
 
