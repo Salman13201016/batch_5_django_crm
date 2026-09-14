@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from .models import*
-from openpyxl import load_workbook
+from openpyxl import load_workbook #excel ta k load
 from django.contrib import messages
-from openpyxl import Workbook
+from openpyxl import Workbook #excel banano
 from openpyxl.styles import Font
 # Create your views here.
 
@@ -44,6 +44,7 @@ def excel_upload(req, excel_file):
         sheet = workbook.active
 
         # ডেটাবেস থেকে আগে থেকেই থাকা category_name এবং sort_order নিয়ে আসা হচ্ছে
+        #select column_name from table_name
         existing_names = set(Category.objects.values_list('category_name', flat=True))
         existing_sort_orders = set(Category.objects.values_list('sort_order', flat=True))
 
@@ -111,6 +112,37 @@ def excel_upload(req, excel_file):
     except Exception as e:
         messages.error(req, f"Excel upload failed: {str(e)}")
 
+from django.core.paginator import Paginator
+
+def course_details(req):
+    if req.method=="POST":
+        cat_id = req.POST.get('category')
+        course_title = req.POST.get('course_title')
+        course_image = req.FILES.get('course_image')
+        course_description = req.POST.get('course_description')
+        actual_price = req.POST.get('actual_price')
+        discount = req.POST.get('discount')
+        prerequisite = req.POST.get('prerequisite')
+        duration = req.POST.get('duration')
+        status = req.POST.get('status')
+        course_details_obj = CourseDetails()
+        #select * from category where id = cat_id
+        cat_id_fk = Category.objects.get(id=cat_id)
+        course_details_obj.category_id_fk = cat_id_fk
+        course_details_obj.course_title = course_title
+        course_details_obj.course_image = course_image
+        course_details_obj.course_description = course_description
+        course_details_obj.actual_price = actual_price
+        course_details_obj.discount = discount
+        course_details_obj.course_prerequisite = prerequisite
+        course_details_obj.duration = duration
+        course_details_obj.status = status
+        course_details_obj.save()
+        return redirect('course_details')
+    else:
+        categories = Category.objects.values('id', 'category_name')
+        cat_data = {'cat_data':categories}
+        return render(req,'course_details.html',cat_data)
 
 def category(req):
     if req.method == 'GET':
@@ -119,7 +151,11 @@ def category(req):
 
         cat_data = Category.objects.order_by('-id')
         print("salman")
-        data = {"all_data":cat_data}
+        limit = 3
+        paginator = Paginator(cat_data, limit) #2 = num of rows per page
+        page_number = req.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        data = {"all_data":page_obj}
 
         return render(req,'course_category.html',data)
     else:
@@ -139,6 +175,7 @@ def category(req):
             # ডেটাবেস থেকে ডেটা এনে বসানো
             categories = Category.objects.order_by('-id')
             for cat in categories:
+                #conditional comprehension
                 status_text = "Active" if cat.status else "Inactive"
                 ws.append([
                     cat.category_name,

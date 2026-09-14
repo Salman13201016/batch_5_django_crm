@@ -443,71 +443,98 @@
 
         <div class="table-card">
 
-        <div class="table-header">
-            <div>
-                <h2>Category List</h2>
-                <p>All course categories are listed below</p>
+            <div class="table-header">
+                <div>
+                    <h2>Category List</h2>
+                    <p>All course categories are listed below</p>
+                </div>
             </div>
-        </div>
 
-        <div class="table-wrapper">
+            <div class="table-wrapper">
 
-            <table class="category-table">
+                <table class="category-table">
 
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Category Name</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Sort Order</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Sort Order</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    {% for i in all_data  %}
-                    <tr>
-                        <td>{{forloop.counter}}</td>
+                    <tbody>
+                        {% for i in all_data  %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+
+                            <td>
+                                <strong>{{i.category_name}}</strong>
+                            </td>
+
+                            <td>
+                                {{i.description}}
+                            </td>
+
+                            <td>
+                                <span class="status active-status">
+                                    {{i.status}}
+                                </span>
+                            </td>
+
+                            <td>{{i.sort_order}}</td>
 
                         <td>
-                            <strong>{{i.category_name}}</strong>
+                            <div class="action-buttons">
+
+                                <a href="{% url 'category_edit' i.id %}" class="action-btn edit-btn">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'course_cat_delete' i.id %}" class="action-btn delete-btn">
+                                    Delete
+                                </a>
+
+                            </div>
                         </td>
-
-                        <td>
-                            {{i.description}}
-                        </td>
-
-                        <td>
-                            <span class="status active-status">
-                                {{i.status}}
-                            </span>
-                        </td>
-
-                        <td>{{i.sort_order}}</td>
-
-                       <td>
-                        <div class="action-buttons">
-
-                            <a href="{% url 'category_edit' i.id %}" class="action-btn edit-btn">
-                                Edit
-                            </a>
-
-                            <a href="{% url 'course_cat_delete' i.id %}" class="action-btn delete-btn">
-                                Delete
-                            </a>
-
-                        </div>
-                    </td>
-                    </tr>
-                    {% endfor %}
+                        </tr>
+                        {% endfor %}
 
 
 
 
-                </tbody>
+                    </tbody>
 
-            </table>
+                </table>
+
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+            
+            <span style="font-size: 14px; color: #4b5563;">
+                Showing Page <strong>{{ all_data.number }}</strong> of <strong>{{ all_data.paginator.num_pages }}</strong>
+            </span>
+
+            <div style="display: flex; gap: 5px;">
+                {% if all_data.has_previous %}
+                    <a href="?page=1" style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 5px; text-decoration: none; color: #374151; font-size: 13px; background: #fff;">
+                        &laquo; First
+                    </a>
+                    <a href="?page={{ all_data.previous_page_number }}" style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 5px; text-decoration: none; color: #374151; font-size: 13px; background: #fff;">
+                        Previous
+                    </a>
+                {% endif %}
+
+                {% if all_data.has_next %}
+                    <a href="?page={{ all_data.next_page_number }}" style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 5px; text-decoration: none; color: #374151; font-size: 13px; background: #fff;">
+                        Next
+                    </a>
+                    <a href="?page={{ all_data.paginator.num_pages }}" style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 5px; text-decoration: none; color: #374151; font-size: 13px; background: #fff;">
+                        Last &raquo;
+                    </a>
+                {% endif %}
+            </div>
 
         </div>
 

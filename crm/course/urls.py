@@ -22,4 +22,5 @@ urlpatterns = [
     path('content/',v.course_content, name='course_content'),
     path('category/edit/<int:cat_id>',v.course_edit, name='category_edit'),
     path('category/delete/<int:cat_id>',v.course_cat_delete, name='course_cat_delete'),
+    path('details/',v.course_details, name='course_details'),
     ]
